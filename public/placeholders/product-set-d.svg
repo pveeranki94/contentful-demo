@@ -1,0 +1,8 @@
+<svg width="1000" height="1250" viewBox="0 0 1000 1250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1000" height="1250" fill="#EEF2EE"/>
+  <circle cx="786" cy="202" r="150" fill="#C4D0C2" fill-opacity=".5"/>
+  <ellipse cx="512" cy="896" rx="286" ry="126" fill="#D6DED4"/>
+  <rect x="336" y="474" width="328" height="214" rx="52" fill="#B9B2A8"/>
+  <rect x="256" y="744" width="488" height="78" rx="34" fill="#EAEFEC"/>
+  <text x="298" y="1048" fill="#31332F" font-family="Georgia, serif" font-size="60">Bedside Calm</text>
+</svg>

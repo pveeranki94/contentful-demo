@@ -1,0 +1,8 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" fill="#F2ECE6"/>
+  <circle cx="700" cy="186" r="132" fill="#D2BAA6" fill-opacity=".4"/>
+  <rect x="170" y="180" width="560" height="760" rx="40" fill="#FBF7F3"/>
+  <rect x="332" y="382" width="236" height="320" rx="40" fill="#D0AE93"/>
+  <rect x="372" y="336" width="156" height="74" rx="22" fill="#96745C"/>
+  <text x="124" y="1000" fill="#312A24" font-family="Georgia, serif" font-size="54">Body &amp; Hand Care</text>
+</svg>

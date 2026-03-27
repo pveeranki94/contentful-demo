@@ -1,0 +1,16 @@
+<svg width="1500" height="1050" viewBox="0 0 1500 1050" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1500" height="1050" fill="#F4EEE6"/>
+  <rect width="1500" height="1050" fill="url(#bg)"/>
+  <circle cx="1146" cy="240" r="188" fill="#D7BEA8" fill-opacity=".4"/>
+  <rect x="140" y="132" width="1220" height="786" rx="44" fill="#FAF5EF"/>
+  <rect x="856" y="224" width="316" height="520" rx="30" fill="#D4B199"/>
+  <rect x="972" y="264" width="114" height="440" rx="26" fill="#9A755C"/>
+  <text x="226" y="760" fill="#332C25" font-family="Georgia, serif" font-size="80">Atmosphere First</text>
+  <text x="228" y="824" fill="#8B7561" font-family="Arial, sans-serif" font-size="28" letter-spacing="8">EDITORIAL BRAND STORY</text>
+  <defs>
+    <linearGradient id="bg" x1="96" y1="82" x2="1400" y2="958" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBF7F2"/>
+      <stop offset="1" stop-color="#E5D3C4"/>
+    </linearGradient>
+  </defs>
+</svg>

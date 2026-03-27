@@ -1,0 +1,20 @@
+<svg width="1600" height="1080" viewBox="0 0 1600 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1080" fill="#F5EEE5"/>
+  <rect width="1600" height="1080" fill="url(#bg)"/>
+  <circle cx="1240" cy="280" r="210" fill="#E6C8A8" fill-opacity=".38"/>
+  <rect x="96" y="132" width="520" height="816" rx="40" fill="#F8F4EE" fill-opacity=".8"/>
+  <rect x="890" y="188" width="490" height="680" rx="42" fill="#D9C4AF"/>
+  <rect x="986" y="286" width="290" height="486" rx="28" fill="#EDE3D7"/>
+  <rect x="1062" y="386" width="138" height="240" rx="22" fill="#BE8E62"/>
+  <rect x="1092" y="350" width="78" height="64" rx="18" fill="#8F6A4E"/>
+  <circle cx="1140" cy="505" r="128" fill="#F4E5D1" fill-opacity=".58"/>
+  <rect x="1028" y="708" width="224" height="22" rx="11" fill="#CAB39A"/>
+  <text x="180" y="824" fill="#3A312A" font-family="Georgia, serif" font-size="94" letter-spacing="8">SEREIN</text>
+  <text x="184" y="892" fill="#8B7561" font-family="Arial, sans-serif" font-size="28" letter-spacing="10">QUIET RITUALS</text>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="90" x2="1448" y2="936" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F3EE"/>
+      <stop offset="1" stop-color="#E8DCD0"/>
+    </linearGradient>
+  </defs>
+</svg>

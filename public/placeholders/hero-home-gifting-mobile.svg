@@ -1,0 +1,17 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#F7F1EA"/>
+  <rect width="900" height="1200" fill="url(#bg)"/>
+  <circle cx="700" cy="176" r="150" fill="#D5B59E" fill-opacity=".4"/>
+  <rect x="208" y="270" width="484" height="710" rx="34" fill="#E7D3C2"/>
+  <rect x="292" y="370" width="316" height="510" rx="26" fill="#FBF7F3"/>
+  <path d="M396 356L450 304L504 356" stroke="#8B6751" stroke-width="12" stroke-linecap="round"/>
+  <rect x="162" y="894" width="576" height="110" rx="26" fill="#C79F81"/>
+  <text x="164" y="170" fill="#8B7561" font-family="Arial, sans-serif" font-size="24" letter-spacing="8">SEASONAL GIVING</text>
+  <text x="156" y="236" fill="#3A312A" font-family="Georgia, serif" font-size="78" letter-spacing="6">SEREIN</text>
+  <defs>
+    <linearGradient id="bg" x1="58" y1="52" x2="826" y2="1138" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FCF8F4"/>
+      <stop offset="1" stop-color="#E2D0C3"/>
+    </linearGradient>
+  </defs>
+</svg>

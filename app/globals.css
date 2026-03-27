@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f7f3ee;
+  --color-sand: #ebe2d8;
+  --color-mist: #dfe5df;
+  --color-sage: #cdd6cb;
+  --color-clay: #d8c3ae;
+  --color-ink: #2c2722;
+  --color-border: rgba(70, 56, 45, 0.12);
+  --font-serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Baskerville", Georgia, serif;
+  --font-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Helvetica, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+  background:
+    radial-gradient(circle at top left, rgba(224, 205, 184, 0.42), transparent 32%),
+    radial-gradient(circle at top right, rgba(197, 209, 197, 0.28), transparent 30%),
+    linear-gradient(180deg, #fbf8f4 0%, #f4efe9 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(216, 195, 174, 0.55);
+}
+
+.page-shell {
+  position: relative;
+}
+
+.page-shell::before {
+  content: "";
+  position: fixed;
+  inset: auto -10vw -20vh auto;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(216, 195, 174, 0.4), transparent 68%);
+  pointer-events: none;
+  filter: blur(30px);
+  z-index: -1;
+}
+
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+
+@media (max-width: 768px) {
+  .section-stack {
+    gap: 4rem;
+  }
+}

@@ -1,0 +1,9 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" fill="#F4EEE7"/>
+  <circle cx="690" cy="184" r="134" fill="#D7BDA8" fill-opacity=".44"/>
+  <rect x="172" y="214" width="556" height="680" rx="36" fill="#E8D2C0"/>
+  <rect x="244" y="282" width="412" height="544" rx="26" fill="#FBF7F2"/>
+  <path d="M450 242V846" stroke="#A67E62" stroke-width="18" stroke-linecap="round"/>
+  <path d="M242 534H658" stroke="#A67E62" stroke-width="18" stroke-linecap="round"/>
+  <text x="226" y="1000" fill="#302923" font-family="Georgia, serif" font-size="58">Gift Sets</text>
+</svg>

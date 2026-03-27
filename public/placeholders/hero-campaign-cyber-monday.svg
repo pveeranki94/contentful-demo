@@ -1,0 +1,16 @@
+<svg width="1600" height="1080" viewBox="0 0 1600 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1080" fill="#191817"/>
+  <rect width="1600" height="1080" fill="url(#bg)"/>
+  <circle cx="1288" cy="226" r="252" fill="#9AA5B8" fill-opacity=".18"/>
+  <rect x="964" y="204" width="342" height="672" rx="38" fill="#AFA39A"/>
+  <rect x="1038" y="294" width="194" height="490" rx="28" fill="#EAE4DD"/>
+  <rect x="1034" y="718" width="204" height="24" rx="12" fill="#D1C5BC"/>
+  <text x="168" y="234" fill="#A2ADC0" font-family="Arial, sans-serif" font-size="30" letter-spacing="10">CYBER MONDAY</text>
+  <text x="162" y="332" fill="#F2EFEA" font-family="Georgia, serif" font-size="102" letter-spacing="7">MIDNIGHT FINALE</text>
+  <defs>
+    <linearGradient id="bg" x1="92" y1="80" x2="1460" y2="980" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#272522"/>
+      <stop offset="1" stop-color="#111111"/>
+    </linearGradient>
+  </defs>
+</svg>

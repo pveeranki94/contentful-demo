@@ -1,0 +1,18 @@
+<svg width="1600" height="1080" viewBox="0 0 1600 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1080" fill="#EEF2EC"/>
+  <rect width="1600" height="1080" fill="url(#bg)"/>
+  <circle cx="1260" cy="250" r="230" fill="#C7D3C5" fill-opacity=".5"/>
+  <ellipse cx="1180" cy="684" rx="220" ry="96" fill="#BFCDBB"/>
+  <rect x="1022" y="356" width="160" height="270" rx="26" fill="#C1A28A"/>
+  <rect x="1062" y="320" width="80" height="62" rx="16" fill="#8E7057"/>
+  <rect x="886" y="590" width="516" height="88" rx="44" fill="#DBE2D7"/>
+  <path d="M360 782C360 692 440 612 530 612C620 612 700 692 700 782" stroke="#D1DDD0" stroke-width="44" stroke-linecap="round"/>
+  <text x="176" y="246" fill="#70816F" font-family="Arial, sans-serif" font-size="28" letter-spacing="10">DAILY RENEWAL</text>
+  <text x="176" y="338" fill="#2F302C" font-family="Georgia, serif" font-size="96" letter-spacing="7">SLOWER DAYS</text>
+  <defs>
+    <linearGradient id="bg" x1="104" y1="90" x2="1458" y2="960" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6FAF4"/>
+      <stop offset="1" stop-color="#D7E1D5"/>
+    </linearGradient>
+  </defs>
+</svg>
