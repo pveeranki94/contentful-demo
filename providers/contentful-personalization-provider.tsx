@@ -64,6 +64,33 @@ const ContentfulPersonalizationContext =
     },
   });
 
+function isClientDebugEnabled() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  return params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
+}
+
+function PersonalizationDisabledDebugReporter() {
+  useEffect(() => {
+    if (!isClientDebugEnabled()) {
+      return;
+    }
+
+    console.warn("[personalization] provider disabled", {
+      enabledFlag: env.nextPublicContentfulPersonalizationEnabled,
+      hasClientId: Boolean(env.nextPublicContentfulPersonalizationClientId),
+      clientIdLength: env.nextPublicContentfulPersonalizationClientId.length,
+      environment: env.nextPublicContentfulPersonalizationEnvironment,
+      apiUrl: env.nextPublicContentfulPersonalizationApiUrl || "(default)",
+    });
+  }, []);
+
+  return null;
+}
+
 function setDebugAudienceCookie(value?: PersonalizationAudienceKey) {
   if (typeof document === "undefined") {
     return;
@@ -338,6 +365,7 @@ export function ContentfulPersonalizationProvider({
           },
         }}
       >
+        <PersonalizationDisabledDebugReporter />
         {children}
       </ContentfulPersonalizationContext.Provider>
     );
@@ -354,10 +382,7 @@ export function ContentfulPersonalizationProvider({
         return;
       }
 
-      const params = new URLSearchParams(window.location.search);
-      const debugModeEnabled = params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
-
-      if (debugModeEnabled) {
+      if (isClientDebugEnabled()) {
         console.info("[ninetailed]", message, ...args);
       }
     },
@@ -366,14 +391,20 @@ export function ContentfulPersonalizationProvider({
         return;
       }
 
-      const params = new URLSearchParams(window.location.search);
-      const debugModeEnabled = params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
-
-      if (debugModeEnabled) {
+      if (isClientDebugEnabled()) {
         console.error("[ninetailed]", message, ...args);
       }
     },
   };
+
+  if (isClientDebugEnabled()) {
+    console.info("[personalization] provider enabled", {
+      environment: env.nextPublicContentfulPersonalizationEnvironment,
+      hasClientId: Boolean(env.nextPublicContentfulPersonalizationClientId),
+      clientIdLength: env.nextPublicContentfulPersonalizationClientId.length,
+      apiUrl: env.nextPublicContentfulPersonalizationApiUrl || "(default)",
+    });
+  }
 
   return (
     <NinetailedProvider {...providerProps}>
