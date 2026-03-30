@@ -134,7 +134,6 @@ function ContentfulPersonalizationRuntime({
     PersonalizationAudienceKey | undefined
   >(undefined);
   const previousPageKey = useRef<string | null>(null);
-  const previousTraitHash = useRef<string | null>(null);
 
   const allowOverride = isPersonalizationOverrideAllowed(previewEnabled);
   const profileData = profile.profile;
@@ -268,21 +267,6 @@ function ContentfulPersonalizationRuntime({
     profileData?.stableId,
     traits,
   ]);
-
-  useEffect(() => {
-    if (!profileData?.id || !profileData.stableId) {
-      return;
-    }
-
-    const nextTraitHash = JSON.stringify(traits);
-
-    if (previousTraitHash.current === nextTraitHash) {
-      return;
-    }
-
-    previousTraitHash.current = nextTraitHash;
-    void ninetailed.identify(profileData.stableId, traits);
-  }, [ninetailed, profileData?.id, profileData?.stableId, traits]);
 
   function trackContentfulEvent(
     event: AnalyticsEvent,
