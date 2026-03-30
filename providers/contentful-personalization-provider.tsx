@@ -10,6 +10,7 @@ import {
 } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
+  type NinetailedProviderInstantiationProps,
   NinetailedProvider,
   useNinetailed,
   useProfile,
@@ -110,6 +111,8 @@ function ContentfulPersonalizationRuntime({
 
   const allowOverride = isPersonalizationOverrideAllowed(previewEnabled);
   const profileData = profile.profile;
+  const debugModeEnabled =
+    searchParams?.get("nt_debug") === "1" || searchParams?.get("nt_debug") === "true";
 
   useEffect(() => {
     setState(readPersonalizationState());
@@ -139,6 +142,10 @@ function ContentfulPersonalizationRuntime({
       setDebugAudienceCookie(undefined);
     }
   }, [allowOverride, debugAudienceOverride, searchParams]);
+
+  useEffect(() => {
+    void ninetailed.debug(debugModeEnabled);
+  }, [debugModeEnabled, ninetailed]);
 
   const traits = useMemo(
     () =>
@@ -177,6 +184,16 @@ function ContentfulPersonalizationRuntime({
       },
     );
 
+    if (debugModeEnabled) {
+      console.info("[personalization] page_view", {
+        pathname,
+        currentPath,
+        payload,
+        activeAudienceKey,
+        profileId: profileData?.stableId,
+      });
+    }
+
     void ninetailed.page({
       path: pathname,
       properties: payload,
@@ -197,6 +214,31 @@ function ContentfulPersonalizationRuntime({
     ninetailed,
     pathname,
     searchParams,
+    traits,
+  ]);
+
+  useEffect(() => {
+    if (!debugModeEnabled) {
+      return;
+    }
+
+    console.info("[personalization] profile", {
+      loading: profile.loading,
+      profileId: profileData?.stableId,
+      audiences: profileData?.audiences ?? [],
+      previewEnabled,
+      debugAudienceOverride,
+      activeAudienceKey,
+      traits,
+    });
+  }, [
+    activeAudienceKey,
+    debugAudienceOverride,
+    debugModeEnabled,
+    previewEnabled,
+    profile.loading,
+    profileData?.audiences,
+    profileData?.stableId,
     traits,
   ]);
 
@@ -301,14 +343,40 @@ export function ContentfulPersonalizationProvider({
     );
   }
 
+  const providerProps: NinetailedProviderInstantiationProps = {
+    clientId: env.nextPublicContentfulPersonalizationClientId,
+    environment: env.nextPublicContentfulPersonalizationEnvironment,
+    preview: previewEnabled,
+    url: env.nextPublicContentfulPersonalizationApiUrl || undefined,
+    useSDKEvaluation: true,
+    onLog(message: unknown, ...args: unknown[]) {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const debugModeEnabled = params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
+
+      if (debugModeEnabled) {
+        console.info("[ninetailed]", message, ...args);
+      }
+    },
+    onError(message: string | Error, ...args: unknown[]) {
+      if (typeof window === "undefined") {
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const debugModeEnabled = params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
+
+      if (debugModeEnabled) {
+        console.error("[ninetailed]", message, ...args);
+      }
+    },
+  };
+
   return (
-    <NinetailedProvider
-      clientId={env.nextPublicContentfulPersonalizationClientId}
-      environment={env.nextPublicContentfulPersonalizationEnvironment}
-      preview={previewEnabled}
-      url={env.nextPublicContentfulPersonalizationApiUrl || undefined}
-      useSDKEvaluation
-    >
+    <NinetailedProvider {...providerProps}>
       <ContentfulPersonalizationRuntime previewEnabled={previewEnabled}>
         {children}
       </ContentfulPersonalizationRuntime>
