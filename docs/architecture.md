@@ -14,9 +14,9 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
 1. `lib/contentful/repository.ts` loads all content types into a unified store.
 2. `contentful/transforms.ts` maps either seed content or Contentful API responses into domain models.
 3. Route loaders derive page-specific views:
-   - `/` resolves the home page, the active-or-featured campaign, and the current audience segment.
+   - `/` resolves the home page, the active-or-featured campaign, and the legacy fallback audience only for server fallback/debug.
    - `/deals` resolves either the active campaign or a preview override via `?campaign=...`.
-   - `/products/[slug]` resolves the product plus personalized related products.
+   - `/products/[slug]` resolves the product plus fallback related products and the full catalog for client-side personalization.
    - `/about` resolves modular editorial sections.
 4. Components render from normalized models, not raw CMS response shapes.
 
@@ -31,22 +31,27 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
 
 ## Personalization
 
-- Audience segment is stored in the `serein_audience_segment` cookie.
-- The selector is visible in the header for every visitor.
-- The cookie is read on the server for first render and refreshed client-side after changes.
+- `providers/contentful-personalization-provider.tsx` initializes the official Contentful Personalization SDK (`@ninetailed/experience.js-react`) when browser-safe config is present.
+- The provider owns:
+  - anonymous profile bootstrap
+  - page and event streaming to Contentful
+  - first-party interest-state persistence in localStorage
+  - active audience resolution from Contentful audience IDs
+  - preview/dev-only audience override cookies
 - Personalization affects:
   - homepage hero choice
-  - promo strip selection
-  - featured product ordering
-  - recommendation ordering
-  - campaign spotlight messaging
+  - global promo strip selection
   - PDP related products
+  - `/deals` featured merchandising experiment via a Contentful flag key
+- If the Personalization SDK is not configured, the app falls back to the existing seed/content-model audience helpers.
 
 ## Analytics
 
 - Client components send events through `AnalyticsProvider`.
-- Development defaults to structured console logging.
-- Production defaults to `noop` unless the configured provider is explicitly supported.
+- `AnalyticsProvider` now fans out to:
+  - the existing external adapter (`console`, `ga4`, `segment`, or `noop`)
+  - Contentful Personalization tracking when enabled
+- Development defaults to structured console logging plus Contentful event streaming when configured.
 - Server-side preview routes log `preview_mode_enabled` and `preview_mode_disabled`.
 
 ## Contentful provisioning strategy

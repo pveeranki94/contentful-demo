@@ -31,6 +31,7 @@ export type AboutPageData = Omit<HomePageData, "activeCampaign">;
 
 export interface ProductPageData {
   product?: ProductModel;
+  allProducts: ProductModel[];
   relatedProducts: ReturnType<typeof getRelatedProducts>;
   siteSettings: ContentStore["siteSettings"];
   campaigns: CampaignModel[];
@@ -78,7 +79,9 @@ export const getContentStore = cache(fetchContentStore);
 
 export async function getHomePageData(preview = false): Promise<HomePageData> {
   const store = await getContentStore(preview);
-  const audienceSegment = await getAudienceSegment(store.siteSettings);
+  const audienceSegment = await getAudienceSegment(store.siteSettings, {
+    previewEnabled: preview,
+  });
   const page = store.pages.find((item) => item.slug === "/");
   const activeCampaign = resolveActiveCampaign(
     store.campaigns,
@@ -100,7 +103,9 @@ export async function getHomePageData(preview = false): Promise<HomePageData> {
 
 export async function getDealsPageData(preview = false): Promise<DealsPageData> {
   const store = await getContentStore(preview);
-  const audienceSegment = await getAudienceSegment(store.siteSettings);
+  const audienceSegment = await getAudienceSegment(store.siteSettings, {
+    previewEnabled: preview,
+  });
   const page = store.pages.find((item) => item.slug === "/deals");
   const activeCampaign = resolveActiveCampaign(
     store.campaigns,
@@ -122,7 +127,9 @@ export async function getDealsPageData(preview = false): Promise<DealsPageData> 
 
 export async function getAboutPageData(preview = false): Promise<AboutPageData> {
   const store = await getContentStore(preview);
-  const audienceSegment = await getAudienceSegment(store.siteSettings);
+  const audienceSegment = await getAudienceSegment(store.siteSettings, {
+    previewEnabled: preview,
+  });
   const page = store.pages.find((item) => item.slug === "/about");
 
   return {
@@ -142,7 +149,9 @@ export async function getProductPageData(
   preview = false,
 ): Promise<ProductPageData> {
   const store = await getContentStore(preview);
-  const audienceSegment = await getAudienceSegment(store.siteSettings);
+  const audienceSegment = await getAudienceSegment(store.siteSettings, {
+    previewEnabled: preview,
+  });
   const product = store.products.find((item) => item.slug === slug);
   const activeCampaign = resolveActiveCampaign(
     store.campaigns,
@@ -151,6 +160,7 @@ export async function getProductPageData(
 
   return {
     product,
+    allProducts: store.products,
     relatedProducts: product
       ? getRelatedProducts(product, store.products, audienceSegment)
       : [],

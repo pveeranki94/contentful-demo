@@ -6,7 +6,7 @@ The brand, copy, products, and artwork are original to this demo. The merchandis
 
 ## Stack
 
-- Next.js `15.5.2`
+- Next.js `15.5.9`
 - React `19.2.0`
 - TypeScript
 - Tailwind CSS `4`
@@ -32,8 +32,9 @@ The brand, copy, products, and artwork are original to this demo. The merchandis
 - Published and draft content support
 - Next.js draft mode preview
 - Contentful inspector mode and live updates in preview mode
-- Visible audience selector with cookie-backed personalization
-- Analytics abstraction with development console logging
+- Contentful Personalization SDK integration with Main-bucket audience mapping
+- Hidden preview/dev personalization override instead of a shopper-facing segment selector
+- Multi-sink analytics with Contentful event streaming plus optional external adapters
 - Local fallback content when Contentful is not configured
 - Deterministic CMA provisioning with seeded assets and entries
 
@@ -68,6 +69,16 @@ The site will still render without Contentful credentials because it falls back 
 - `NEXT_PUBLIC_CONTENTFUL_SPACE_ID`
 - `NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT`
 - `NEXT_PUBLIC_CONTENTFUL_LIVE_PREVIEW`
+- `NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_ENABLED`
+- `NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_CLIENT_ID`
+- `NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_ENVIRONMENT`
+- `NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_API_URL`
+- `NEXT_PUBLIC_CONTENTFUL_AUDIENCE_GIFT_INTENT_ID`
+- `NEXT_PUBLIC_CONTENTFUL_AUDIENCE_HOME_FRAGRANCE_EXPLORER_ID`
+- `NEXT_PUBLIC_CONTENTFUL_AUDIENCE_BODY_CARE_RITUAL_SEEKER_ID`
+- `NEXT_PUBLIC_CONTENTFUL_AUDIENCE_DEALS_SENSITIVE_VISITOR_ID`
+- `NEXT_PUBLIC_CONTENTFUL_AUDIENCE_NEW_VISITOR_ID`
+- `NEXT_PUBLIC_CONTENTFUL_DEALS_EXPERIMENT_FLAG_KEY`
 - `NEXT_PUBLIC_SITE_URL`
 
 ### Provisioning only
@@ -85,7 +96,16 @@ The site will still render without Contentful credentials because it falls back 
    - a Preview API token
    - a Management API token
 4. Set the values in `.env.local`.
-5. Add preview URLs in **Settings -> Content preview** using the examples in [docs/preview-and-live-preview.md](/Users/prashanth.veeranki/Documents/contentful-demo/docs/preview-and-live-preview.md).
+5. Install and configure the Contentful Personalization app for the same environment and connect it directly to the **Main bucket**.
+6. Create the initial audiences in Contentful:
+   - `Gift Intent`
+   - `Home Fragrance Explorer`
+   - `Body Care Ritual Seeker`
+   - `Deals Sensitive Visitor`
+   - `New Visitor`
+7. Copy the Personalization client ID and the audience IDs into `.env.local`.
+8. Add the deals experiment variable key in Contentful and keep it aligned with `NEXT_PUBLIC_CONTENTFUL_DEALS_EXPERIMENT_FLAG_KEY`.
+9. Add preview URLs in **Settings -> Content preview** using the examples in [docs/preview-and-live-preview.md](/Users/prashanth.veeranki/Documents/contentful-demo/docs/preview-and-live-preview.md).
 
 ## Provisioning
 
@@ -187,22 +207,33 @@ Full instructions: [docs/preview-and-live-preview.md](/Users/prashanth.veeranki/
 
 ## Personalization
 
-The audience selector stores one of the following segments in the `serein_audience_segment` cookie:
+Personalization is now driven by the official Contentful Personalization SDK (`@ninetailed/experience.js*`) plus storefront event streaming.
 
-- `relax-and-unwind`
-- `gifting`
-- `self-care-ritual`
+Production behavior no longer uses the old visible audience selector. Instead:
 
-This selection changes:
+- Contentful audiences are the source of truth.
+- The app sends anonymous first-party traits and events to Contentful.
+- Three zones resolve client-side against the active Contentful audience:
+  - homepage hero
+  - global promo strip
+  - PDP related products
+- `/deals` includes a first experiment slot keyed by `NEXT_PUBLIC_CONTENTFUL_DEALS_EXPERIMENT_FLAG_KEY`.
 
-- homepage hero selection
-- promo strip selection
-- featured product ordering
-- recommendation ordering
-- campaign spotlight messaging
-- related products on the PDP
+Initial planned audiences:
 
-If audience-specific content does not exist, the app falls back to generic content and finally to the segment configured in site settings.
+- `Gift Intent`
+- `Home Fragrance Explorer`
+- `Body Care Ritual Seeker`
+- `Deals Sensitive Visitor`
+- `New Visitor`
+
+Debugging and QA:
+
+- In preview mode or local development, append `?nt_debug=1` to show the hidden debug panel.
+- Append `?nt_debug_audience=gift-intent` (or any other configured audience key) to force a temporary override.
+- Append `?nt_debug_audience=clear` to clear the override cookie.
+
+If Personalization is not configured, the app falls back to the legacy audience-aware content ordering and finally to the site-settings fallback segment.
 
 ## Analytics
 
@@ -214,7 +245,7 @@ Tracked events:
 - `product_card_click`
 - `product_view`
 - `recommendation_click`
-- `audience_segment_selected`
+- `experience_impression`
 - `preview_mode_enabled`
 - `preview_mode_disabled`
 
@@ -226,10 +257,24 @@ Where events fire:
 - `product_card_click`: standard product grid cards
 - `product_view`: `components/product/product-view-tracker.tsx`
 - `recommendation_click`: recommendation block cards and PDP related products
-- `audience_segment_selected`: `components/ui/audience-selector.tsx`
+- `experience_impression`: deals experiment impression tracking
 - preview events: preview route handlers
 
-Development behavior logs analytics to the console. Production defaults to `noop` unless a supported adapter is configured through site settings.
+When Personalization is enabled, every app analytics event is also streamed to Contentful with additional properties such as:
+
+- `route_type`
+- `page_slug`
+- `campaign_slug`
+- `product_slug`
+- `category_slug`
+- `product_tags`
+- `is_deals_page`
+- `is_gift_set`
+- `audience_override_active`
+- `referrer_type`
+- `utm_campaign`
+
+Development behavior still logs to the console through the existing adapter. External GA4/Segment fan-out remains optional.
 
 ## Campaign scheduling and release demo
 
@@ -284,8 +329,8 @@ No custom server or extra Vercel configuration is required.
 - App Router pages are server components by default.
 - Client components are used only for:
   - analytics provider
+  - Contentful personalization provider and debug panel
   - live preview wrappers
-  - audience selector
   - mobile navigation
   - product view tracking
 - Runtime content access uses native `fetch` to CDA or CPA.

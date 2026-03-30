@@ -7,11 +7,17 @@ import { useAnalytics } from "@/analytics/client";
 interface ProductViewTrackerProps {
   productId: string;
   slug: string;
+  categorySlug?: string;
+  productTags?: string[];
+  isGiftSet?: boolean;
 }
 
 export function ProductViewTracker({
   productId,
   slug,
+  categorySlug,
+  productTags,
+  isGiftSet,
 }: ProductViewTrackerProps) {
   const { track } = useAnalytics();
 
@@ -20,10 +26,13 @@ export function ProductViewTracker({
       name: "product_view",
       payload: {
         productId,
-        slug,
+        product_slug: slug,
+        category_slug: categorySlug,
+        product_tags: productTags,
+        is_gift_set: isGiftSet,
       },
     });
-  }, [productId, slug, track]);
+  }, [categorySlug, isGiftSet, productId, productTags, slug, track]);
 
   return null;
 }

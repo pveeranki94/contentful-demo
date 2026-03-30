@@ -7,13 +7,14 @@ export type AnalyticsEventName =
   | "product_card_click"
   | "product_view"
   | "recommendation_click"
+  | "experience_impression"
   | "audience_segment_selected"
   | "preview_mode_enabled"
   | "preview_mode_disabled";
 
 export interface AnalyticsEvent {
   name: AnalyticsEventName;
-  payload?: Record<string, string | number | boolean | undefined | null>;
+  payload?: Record<string, string | number | boolean | string[] | undefined | null>;
 }
 
 export function buildPageViewEvent(pathname: string): AnalyticsEvent {

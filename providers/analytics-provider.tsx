@@ -7,6 +7,7 @@ import { createAnalyticsAdapter } from "@/analytics/adapters";
 import { AnalyticsContext } from "@/analytics/client";
 import { buildPageViewEvent, type AnalyticsEvent } from "@/analytics/events";
 import type { AnalyticsProvider } from "@/types/domain";
+import { useContentfulPersonalization } from "@/providers/contentful-personalization-provider";
 
 interface AnalyticsProviderProps {
   analyticsProvider: AnalyticsProvider;
@@ -22,6 +23,7 @@ export function AnalyticsProvider({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const previousPath = useRef<string | null>(null);
+  const personalization = useContentfulPersonalization();
 
   const adapter = useMemo(
     () => createAnalyticsAdapter(analyticsProvider, analyticsMeasurementId),
@@ -38,11 +40,15 @@ export function AnalyticsProvider({
     }
 
     previousPath.current = currentPath;
-    adapter.track(buildPageViewEvent(currentPath));
-  }, [adapter, pathname, searchParams]);
+    track(buildPageViewEvent(currentPath));
+  }, [adapter, pathname, personalization, searchParams]);
 
   function track(event: AnalyticsEvent) {
     adapter.track(event);
+
+    if (personalization.enabled) {
+      personalization.trackContentfulEvent(event, pathname, searchParams);
+    }
   }
 
   return (

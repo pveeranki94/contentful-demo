@@ -6,13 +6,13 @@ import type {
   SectionModel,
 } from "@/types/domain";
 import { pickBestHero } from "@/lib/personalization";
-import { HeroBannerSection } from "@/components/sections/hero-banner-section";
 import { PromoGridSection } from "@/components/sections/promo-grid-section";
 import { FeaturedProductsSection } from "@/components/sections/featured-products-section";
 import { RichTextSection } from "@/components/sections/rich-text-section";
 import { SplitFeatureSection } from "@/components/sections/split-feature-section";
 import { CampaignSpotlightSection } from "@/components/sections/campaign-spotlight-section";
 import { RecommendationBlockSection } from "@/components/sections/recommendation-block-section";
+import { PersonalizedHeroSection } from "@/components/personalization/personalized-hero-section";
 
 interface SectionRendererProps {
   sections: SectionModel[];
@@ -40,10 +40,11 @@ export function SectionRenderer({
   return (
     <>
       {selectedHero ? (
-        <HeroBannerSection
-          hero={selectedHero}
+        <PersonalizedHeroSection
+          heroes={heroCandidates}
+          fallbackHero={selectedHero}
           previewEnabled={previewEnabled}
-          rawEntry={rawEntriesById[selectedHero.id] as ContentfulEntry | undefined}
+          rawEntriesById={rawEntriesById}
         />
       ) : null}
 

@@ -7,6 +7,19 @@ export type AudienceSegment =
   | "gifting"
   | "self-care-ritual";
 
+export type PersonalizationAudienceKey =
+  | "gift-intent"
+  | "home-fragrance-explorer"
+  | "body-care-ritual-seeker"
+  | "deals-sensitive-visitor"
+  | "new-visitor";
+
+export type PersonalizationSlotKey =
+  | "home.hero"
+  | "global.promo_strip"
+  | "product.related_products"
+  | "deals.featured_merchandising";
+
 export type CampaignType =
   | "teaser"
   | "black-friday"
@@ -27,6 +40,31 @@ export type SectionType =
   | "recommendationBlock";
 
 export type AnalyticsProvider = "console" | "noop" | "vercel" | "ga4" | "segment";
+
+export interface PersonalizationTraits {
+  isReturningVisitor: boolean;
+  recentCategoryInterest?: string;
+  recentProductTags: string[];
+  recentCampaignInterest?: string;
+  giftInterestScore: number;
+  fragranceInterestScore: number;
+  bodyCareInterestScore: number;
+  dealsInterestScore: number;
+  sessionEntryRoute?: string;
+  lastViewedCategory?: string;
+}
+
+export interface TrackedPersonalizationEvent {
+  name: string;
+  payload: Record<string, string | number | boolean | string[] | undefined | null>;
+}
+
+export interface ResolvedPersonalizationVariant<T> {
+  slot: PersonalizationSlotKey;
+  audienceKey?: PersonalizationAudienceKey;
+  variant: T;
+  source: "contentful-personalization" | "debug-override" | "legacy-fallback";
+}
 
 export interface ContentfulMetadata {
   entryId: string;

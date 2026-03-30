@@ -27,7 +27,14 @@ export function ProductCard({
     <TrackedLink
       href={`/products/${product.slug}`}
       eventName={eventName}
-      eventPayload={{ productId: product.id, reason }}
+      eventPayload={{
+        productId: product.id,
+        product_slug: product.slug,
+        category_slug: product.category?.slug,
+        product_tags: product.tags,
+        is_gift_set: product.category?.slug === "gift-sets",
+        reason,
+      }}
       className="group block rounded-[2rem] border border-border bg-paper/92 p-4 shadow-[0_20px_60px_rgba(55,44,34,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_80px_rgba(55,44,34,0.14)]"
     >
       <div className="relative overflow-hidden rounded-[1.6rem] bg-sand">

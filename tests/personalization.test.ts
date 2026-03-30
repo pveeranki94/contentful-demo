@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { createSeedContentStore } from "@/contentful/transforms";
 import {
+  getPersonalizationAudienceKeyFromProfile,
+  reducePersonalizationState,
+} from "@/lib/contentful/personalization";
+import {
   getRelatedProducts,
   orderProductsForAudience,
   pickBestHero,
@@ -30,5 +34,39 @@ describe("personalization helpers", () => {
 
     expect(related).toHaveLength(4);
     expect(related[0].product.id).not.toBe(source.id);
+  });
+
+  it("lets debug overrides win over profile audiences", () => {
+    const resolved = getPersonalizationAudienceKeyFromProfile(
+      ["unknown-audience"],
+      "home-fragrance-explorer",
+    );
+
+    expect(resolved).toBe("home-fragrance-explorer");
+  });
+
+  it("derives first-party interest state from storefront events", () => {
+    const nextState = reducePersonalizationState(
+      {
+        isReturningVisitor: false,
+        recentProductTags: [],
+        giftInterestScore: 0,
+        fragranceInterestScore: 0,
+        bodyCareInterestScore: 0,
+        dealsInterestScore: 0,
+      },
+      {
+        name: "product_view",
+        payload: {
+          category_slug: "gift-sets",
+          product_tags: ["gift", "home"],
+          is_gift_set: true,
+        },
+      },
+    );
+
+    expect(nextState.giftInterestScore).toBeGreaterThan(0);
+    expect(nextState.recentCategoryInterest).toBe("gift-sets");
+    expect(nextState.recentProductTags).toContain("gift");
   });
 });

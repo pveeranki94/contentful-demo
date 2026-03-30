@@ -1,6 +1,6 @@
 import { draftMode } from "next/headers";
 
-import { FeaturedProductsSection } from "@/components/sections/featured-products-section";
+import { DealsExperimentSection } from "@/components/personalization/deals-experiment-section";
 import { HeroBannerSection } from "@/components/sections/hero-banner-section";
 import { PromoGridSection } from "@/components/sections/promo-grid-section";
 import { RichTextSection } from "@/components/sections/rich-text-section";
@@ -93,7 +93,7 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
           }}
         />
 
-        <FeaturedProductsSection
+        <DealsExperimentSection
           section={{
             id: "deals_products",
             internalName: "Deals products",
@@ -105,6 +105,7 @@ export default async function DealsPage({ searchParams }: DealsPageProps) {
             linkedCampaigns: [],
             theme: "mist",
           }}
+          products={campaign.featuredProducts}
           previewEnabled={isEnabled}
         />
 

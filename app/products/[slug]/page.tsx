@@ -2,7 +2,7 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { LivePreviewProductPanel } from "@/components/live-preview/live-preview-product-panel";
-import { ProductCard } from "@/components/product/product-card";
+import { PersonalizedRelatedProducts } from "@/components/personalization/personalized-related-products";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductViewTracker } from "@/components/product/product-view-tracker";
 import { RichText } from "@/lib/contentful/rich-text";
@@ -47,7 +47,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-      <ProductViewTracker productId={product.id} slug={product.slug} />
+      <ProductViewTracker
+        productId={product.id}
+        slug={product.slug}
+        categorySlug={product.category?.slug}
+        productTags={product.tags}
+        isGiftSet={product.category?.slug === "gift-sets"}
+      />
 
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <ProductGallery product={product} />
@@ -155,17 +161,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {data.relatedProducts.map((recommendation) => (
-          <ProductCard
-            key={recommendation.product.id}
-            product={recommendation.product}
-            previewEnabled={isEnabled}
-            eventName="recommendation_click"
-            reason={recommendation.reason}
-          />
-        ))}
-      </div>
+      <PersonalizedRelatedProducts
+        product={product}
+        catalogProducts={data.allProducts}
+        fallbackRecommendations={data.relatedProducts}
+        previewEnabled={isEnabled}
+      />
     </div>
   );
 }

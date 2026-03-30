@@ -59,7 +59,11 @@ export function PromoStripBar({
           <TrackedLink
             href={strip.ctaHref}
             eventName="promo_strip_click"
-            eventPayload={{ stripId: strip.id, href: strip.ctaHref }}
+            eventPayload={{
+              stripId: strip.id,
+              href: strip.ctaHref,
+              campaign_slug: strip.campaignId,
+            }}
             className={buttonLinkClassName({
               variant: strip.theme === "charcoal" ? "light" : "ghost",
               className:

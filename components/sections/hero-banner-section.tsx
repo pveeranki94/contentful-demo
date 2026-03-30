@@ -82,7 +82,11 @@ export function HeroBannerSection({
                   className: "mt-8 min-w-56 text-[15px]",
                 })}
                 eventName="hero_cta_click"
-                eventPayload={{ heroId: hero.id, href: hero.ctaHref }}
+                eventPayload={{
+                  heroId: hero.id,
+                  href: hero.ctaHref,
+                  campaign_slug: hero.campaignId,
+                }}
               >
                 <span
                   {...getInspectorAttributes(

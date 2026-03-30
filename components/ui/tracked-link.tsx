@@ -10,7 +10,7 @@ interface TrackedLinkProps extends LinkProps {
   children: React.ReactNode;
   className?: string;
   eventName?: AnalyticsEventName;
-  eventPayload?: Record<string, string | number | boolean | undefined | null>;
+  eventPayload?: Record<string, string | number | boolean | string[] | undefined | null>;
 }
 
 export function TrackedLink({

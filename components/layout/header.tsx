@@ -1,12 +1,10 @@
 import Link from "next/link";
 
-import { AudienceSelector } from "@/components/ui/audience-selector";
 import { MobileNav } from "@/components/layout/mobile-nav";
-import type { AudienceSegment, SiteSettingsModel } from "@/types/domain";
+import type { SiteSettingsModel } from "@/types/domain";
 
 interface HeaderProps {
   siteSettings: SiteSettingsModel;
-  audienceSegment: AudienceSegment;
 }
 
 const navItems = [
@@ -15,7 +13,7 @@ const navItems = [
   { href: "/about", label: "About" },
 ];
 
-export function Header({ siteSettings, audienceSegment }: HeaderProps) {
+export function Header({ siteSettings }: HeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-paper/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
@@ -41,14 +39,8 @@ export function Header({ siteSettings, audienceSegment }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:block">
-            <AudienceSelector currentSegment={audienceSegment} />
-          </div>
           <MobileNav />
         </div>
-      </div>
-      <div className="border-t border-border/70 px-4 py-3 sm:hidden">
-        <AudienceSelector currentSegment={audienceSegment} />
       </div>
     </header>
   );

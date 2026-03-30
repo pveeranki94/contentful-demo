@@ -9,12 +9,18 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "contentful:provision": "tsx scripts/contentful/provision.ts"
+    "contentful:provision": "tsx scripts/contentful/provision.ts",
+    "contentful:create-audiences": "tsx scripts/contentful/create-personalization-audiences.ts"
   },
   "dependencies": {
     "@contentful/live-preview": "^4.6.42",
     "@contentful/rich-text-react-renderer": "^16.1.1",
     "@contentful/rich-text-types": "^17.2.1",
+    "@ninetailed/experience.js": "^7.21.3",
+    "@ninetailed/experience.js-node": "^7.21.3",
+    "@ninetailed/experience.js-plugin-preview": "^7.21.3",
+    "@ninetailed/experience.js-plugin-privacy": "^7.21.3",
+    "@ninetailed/experience.js-react": "^7.21.3",
     "clsx": "^2.1.1",
     "contentful-management": "^11.54.4",
     "next": "^15.5.9",
