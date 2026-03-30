@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useFlag } from "@ninetailed/experience.js-react";
 
 import { FeaturedProductsSection } from "@/components/sections/featured-products-section";
 import { useAnalytics } from "@/analytics/client";
-import { env } from "@/lib/env";
 import {
   getDealsExperimentVariantFromProfileId,
   getPersonalizationSlotDisplayName,
@@ -47,18 +45,9 @@ export function DealsExperimentSection({
 }: DealsExperimentSectionProps) {
   const personalization = useContentfulPersonalization();
   const { track } = useAnalytics();
-  const defaultVariant = getDealsExperimentVariantFromProfileId(
+  const activeVariant = getDealsExperimentVariantFromProfileId(
     personalization.profileId,
   );
-  const experimentFlag = useFlag(
-    env.nextPublicContentfulDealsExperimentFlagKey,
-    defaultVariant,
-  );
-
-  const activeVariant =
-    experimentFlag.value === "product-discount-first"
-      ? "product-discount-first"
-      : "campaign-first";
 
   const displayProducts = useMemo(
     () => sortProductsForVariant(products, activeVariant),
