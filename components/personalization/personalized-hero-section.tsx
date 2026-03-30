@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import type { ContentfulEntry, HeroBannerFields } from "@/types/contentful";
 import type { HeroBannerModel } from "@/types/domain";
 import { HeroBannerSection } from "@/components/sections/hero-banner-section";
@@ -20,7 +22,13 @@ export function PersonalizedHeroSection({
   rawEntriesById,
 }: PersonalizedHeroSectionProps) {
   const personalization = useContentfulPersonalization();
-  const selectedHero = personalization.enabled
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const selectedHero = hydrated && personalization.enabled
     ? resolveHeroForAudience(heroes, personalization.activeAudienceKey)
     : fallbackHero;
 

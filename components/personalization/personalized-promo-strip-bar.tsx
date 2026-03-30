@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import type { ContentfulEntry, PromoStripFields } from "@/types/contentful";
 import type { PromoStripModel } from "@/types/domain";
 import { PromoStripBar } from "@/components/layout/promo-strip-bar";
@@ -22,7 +24,13 @@ export function PersonalizedPromoStripBar({
   rawEntriesById,
 }: PersonalizedPromoStripBarProps) {
   const personalization = useContentfulPersonalization();
-  const selectedStrip = personalization.enabled
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  const selectedStrip = hydrated && personalization.enabled
     ? resolvePromoStripForAudience(
         strips,
         fallbackStrip,

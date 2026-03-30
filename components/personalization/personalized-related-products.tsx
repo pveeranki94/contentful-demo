@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ProductCard } from "@/components/product/product-card";
 import { resolveRelatedProductsForAudience } from "@/lib/contentful/personalization";
@@ -21,9 +21,14 @@ export function PersonalizedRelatedProducts({
   previewEnabled,
 }: PersonalizedRelatedProductsProps) {
   const personalization = useContentfulPersonalization();
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   const recommendations = useMemo(() => {
-    if (!personalization.enabled) {
+    if (!hydrated || !personalization.enabled) {
       return fallbackRecommendations;
     }
 
@@ -38,6 +43,7 @@ export function PersonalizedRelatedProducts({
     personalization.activeAudienceKey,
     personalization.enabled,
     product,
+    hydrated,
   ]);
 
   return (
