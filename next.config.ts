@@ -1,12 +1,30 @@
 import type { NextConfig } from "next";
 
+function getPersonalizationConnectSources() {
+  const defaults = ["https://experience.ninetailed.co"];
+  const configuredUrl = process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_API_URL;
+
+  if (!configuredUrl) {
+    return defaults;
+  }
+
+  try {
+    const origin = new URL(configuredUrl).origin;
+    return Array.from(new Set([...defaults, origin]));
+  } catch {
+    return defaults;
+  }
+}
+
+const personalizationConnectSources = getPersonalizationConnectSources();
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "img-src 'self' data: blob: https://images.ctfassets.net https://images.eu.ctfassets.net https://downloads.ctfassets.net https://downloads.eu.ctfassets.net",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "font-src 'self' data:",
-  "connect-src 'self' https://cdn.contentful.com https://preview.contentful.com https://cdn.eu.contentful.com https://preview.eu.contentful.com https://app.contentful.com https://app.eu.contentful.com",
+  `connect-src 'self' https://cdn.contentful.com https://preview.contentful.com https://cdn.eu.contentful.com https://preview.eu.contentful.com https://app.contentful.com https://app.eu.contentful.com ${personalizationConnectSources.join(" ")}`,
   "frame-ancestors https://app.contentful.com https://app.eu.contentful.com",
 ].join("; ");
 
