@@ -3,10 +3,17 @@ function normalizeString(value?: string) {
     return "";
   }
 
-  const trimmed = value.trim();
+  let trimmed = value.trim();
 
   if (!trimmed || trimmed === '""' || trimmed === "''") {
     return "";
+  }
+
+  if (
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+  ) {
+    trimmed = trimmed.slice(1, -1).trim();
   }
 
   return trimmed;
