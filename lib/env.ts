@@ -1,5 +1,19 @@
 const toBoolean = (value?: string) => value === "true";
 
+function normalizeString(value?: string) {
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed || trimmed === '""' || trimmed === "''") {
+    return "";
+  }
+
+  return trimmed;
+}
+
 export const env = {
   contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID ?? "",
   contentfulEnvironment: process.env.CONTENTFUL_ENVIRONMENT ?? "master",
@@ -25,22 +39,29 @@ export const env = {
   nextPublicContentfulPersonalizationEnabled: toBoolean(
     process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_ENABLED,
   ),
-  nextPublicContentfulPersonalizationClientId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_CLIENT_ID ?? "",
+  nextPublicContentfulPersonalizationClientId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_CLIENT_ID,
+  ),
   nextPublicContentfulPersonalizationEnvironment:
-    process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_ENVIRONMENT ?? "main",
-  nextPublicContentfulPersonalizationApiUrl:
-    process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_API_URL ?? "",
-  nextPublicContentfulAudienceGiftIntentId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_GIFT_INTENT_ID ?? "",
-  nextPublicContentfulAudienceHomeFragranceExplorerId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_HOME_FRAGRANCE_EXPLORER_ID ?? "",
-  nextPublicContentfulAudienceBodyCareRitualSeekerId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_BODY_CARE_RITUAL_SEEKER_ID ?? "",
-  nextPublicContentfulAudienceDealsSensitiveVisitorId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_DEALS_SENSITIVE_VISITOR_ID ?? "",
-  nextPublicContentfulAudienceNewVisitorId:
-    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_NEW_VISITOR_ID ?? "",
+    normalizeString(process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_ENVIRONMENT) || "main",
+  nextPublicContentfulPersonalizationApiUrl: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_PERSONALIZATION_API_URL,
+  ),
+  nextPublicContentfulAudienceGiftIntentId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_GIFT_INTENT_ID,
+  ),
+  nextPublicContentfulAudienceHomeFragranceExplorerId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_HOME_FRAGRANCE_EXPLORER_ID,
+  ),
+  nextPublicContentfulAudienceBodyCareRitualSeekerId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_BODY_CARE_RITUAL_SEEKER_ID,
+  ),
+  nextPublicContentfulAudienceDealsSensitiveVisitorId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_DEALS_SENSITIVE_VISITOR_ID,
+  ),
+  nextPublicContentfulAudienceNewVisitorId: normalizeString(
+    process.env.NEXT_PUBLIC_CONTENTFUL_AUDIENCE_NEW_VISITOR_ID,
+  ),
   nextPublicContentfulDealsExperimentFlagKey:
     process.env.NEXT_PUBLIC_CONTENTFUL_DEALS_EXPERIMENT_FLAG_KEY ??
     "deals-featured-merchandising-variant",
