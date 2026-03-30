@@ -224,7 +224,6 @@ function ContentfulPersonalizationRuntime({
       path: pathname,
       properties: payload,
     });
-    void ninetailed.track("page_view", payload);
     setState((currentState) => {
       const nextState = reducePersonalizationState(currentState, {
         name: "page_view",
