@@ -1,5 +1,3 @@
-const toBoolean = (value?: string) => value === "true";
-
 function normalizeString(value?: string) {
   if (typeof value !== "string") {
     return "";
@@ -13,6 +11,8 @@ function normalizeString(value?: string) {
 
   return trimmed;
 }
+
+const toBoolean = (value?: string) => normalizeString(value).toLowerCase() === "true";
 
 export const env = {
   contentfulSpaceId: process.env.CONTENTFUL_SPACE_ID ?? "",
