@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { useAnalytics } from "@/analytics/client";
 
@@ -20,8 +20,17 @@ export function ProductViewTracker({
   isGiftSet,
 }: ProductViewTrackerProps) {
   const { track } = useAnalytics();
+  const trackedProductKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
+    const trackingKey = `${productId}:${slug}`;
+
+    if (trackedProductKeyRef.current === trackingKey) {
+      return;
+    }
+
+    trackedProductKeyRef.current = trackingKey;
+
     track({
       name: "product_view",
       payload: {

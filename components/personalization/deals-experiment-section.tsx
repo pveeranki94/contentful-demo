@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { FeaturedProductsSection } from "@/components/sections/featured-products-section";
 import { useAnalytics } from "@/analytics/client";
@@ -48,6 +48,7 @@ export function DealsExperimentSection({
   const activeVariant = getDealsExperimentVariantFromProfileId(
     personalization.profileId,
   );
+  const trackedVariantRef = useRef<string | null>(null);
 
   const displayProducts = useMemo(
     () => sortProductsForVariant(products, activeVariant),
@@ -58,6 +59,12 @@ export function DealsExperimentSection({
     if (!personalization.enabled) {
       return;
     }
+
+    if (trackedVariantRef.current === activeVariant) {
+      return;
+    }
+
+    trackedVariantRef.current = activeVariant;
 
     track({
       name: "experience_impression",

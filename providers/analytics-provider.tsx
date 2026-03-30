@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import { createAnalyticsAdapter } from "@/analytics/adapters";
@@ -29,6 +29,29 @@ export function AnalyticsProvider({
     () => createAnalyticsAdapter(analyticsProvider, analyticsMeasurementId),
     [analyticsMeasurementId, analyticsProvider],
   );
+  const adapterRef = useRef(adapter);
+  const personalizationRef = useRef(personalization);
+  const pathnameRef = useRef(pathname);
+  const searchParamsRef = useRef(searchParams);
+
+  adapterRef.current = adapter;
+  personalizationRef.current = personalization;
+  pathnameRef.current = pathname;
+  searchParamsRef.current = searchParams;
+
+  const track = useCallback((event: AnalyticsEvent) => {
+    adapterRef.current.track(event);
+
+    const currentPersonalization = personalizationRef.current;
+
+    if (currentPersonalization.enabled && event.name !== "page_view") {
+      currentPersonalization.trackContentfulEvent(
+        event,
+        pathnameRef.current,
+        searchParamsRef.current,
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const currentPath = searchParams?.size
@@ -41,15 +64,7 @@ export function AnalyticsProvider({
 
     previousPath.current = currentPath;
     track(buildPageViewEvent(currentPath));
-  }, [adapter, pathname, personalization, searchParams]);
-
-  function track(event: AnalyticsEvent) {
-    adapter.track(event);
-
-    if (personalization.enabled && event.name !== "page_view") {
-      personalization.trackContentfulEvent(event, pathname, searchParams);
-    }
-  }
+  }, [pathname, searchParams, track]);
 
   return (
     <AnalyticsContext.Provider value={{ track }}>
