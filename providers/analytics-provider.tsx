@@ -46,7 +46,7 @@ export function AnalyticsProvider({
   function track(event: AnalyticsEvent) {
     adapter.track(event);
 
-    if (personalization.enabled) {
+    if (personalization.enabled && event.name !== "page_view") {
       personalization.trackContentfulEvent(event, pathname, searchParams);
     }
   }
