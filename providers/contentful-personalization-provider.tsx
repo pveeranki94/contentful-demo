@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -30,6 +31,7 @@ import {
   writePersonalizationState,
   type PersonalizationState,
 } from "@/lib/contentful/personalization";
+import { isContentfulCanonicalEventName } from "@/contentful/personalization-plan";
 import { env, hasContentfulPersonalizationConfig } from "@/lib/env";
 import type {
   PersonalizationAudienceKey,
@@ -73,9 +75,13 @@ function isClientDebugEnabled() {
   return params.get("nt_debug") === "1" || params.get("nt_debug") === "true";
 }
 
+function isDebugLoggingAllowed(previewEnabled: boolean) {
+  return previewEnabled || process.env.NODE_ENV !== "production";
+}
+
 function PersonalizationDisabledDebugReporter() {
   useEffect(() => {
-    if (!isClientDebugEnabled()) {
+    if (!isClientDebugEnabled() || process.env.NODE_ENV === "production") {
       return;
     }
 
@@ -138,7 +144,8 @@ function ContentfulPersonalizationRuntime({
   const allowOverride = isPersonalizationOverrideAllowed(previewEnabled);
   const profileData = profile.profile;
   const debugModeEnabled =
-    searchParams?.get("nt_debug") === "1" || searchParams?.get("nt_debug") === "true";
+    isDebugLoggingAllowed(previewEnabled) &&
+    (searchParams?.get("nt_debug") === "1" || searchParams?.get("nt_debug") === "true");
 
   useEffect(() => {
     setState(readPersonalizationState());
@@ -267,11 +274,15 @@ function ContentfulPersonalizationRuntime({
     traits,
   ]);
 
-  function trackContentfulEvent(
+  const trackContentfulEvent = useCallback((
     event: AnalyticsEvent,
     currentPathname: string,
     currentSearchParams: URLSearchParams | null,
-  ) {
+  ) => {
+    if (!isContentfulCanonicalEventName(event.name)) {
+      return;
+    }
+
     const payload = enrichAnalyticsPayload(
       event.name,
       event.payload ?? {},
@@ -293,16 +304,22 @@ function ContentfulPersonalizationRuntime({
       writePersonalizationState(nextState);
       return nextState;
     });
-  }
+  }, [
+    activeAudienceKey,
+    allowOverride,
+    debugAudienceOverride,
+    ninetailed,
+    traits,
+  ]);
 
-  function setDebugAudienceOverride(value?: PersonalizationAudienceKey) {
+  const setDebugAudienceOverride = useCallback((value?: PersonalizationAudienceKey) => {
     if (!allowOverride) {
       return;
     }
 
     setDebugAudienceOverrideState(value);
     setDebugAudienceCookie(value);
-  }
+  }, [allowOverride]);
 
   return (
     <ContentfulPersonalizationContext.Provider
@@ -380,7 +397,7 @@ export function ContentfulPersonalizationProvider({
     },
   };
 
-  if (isClientDebugEnabled()) {
+  if (isClientDebugEnabled() && isDebugLoggingAllowed(previewEnabled)) {
     console.info("[personalization] provider enabled", {
       environment: env.nextPublicContentfulPersonalizationEnvironment,
       hasClientId: Boolean(env.nextPublicContentfulPersonalizationClientId),

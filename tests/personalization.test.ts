@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import {
+  contentfulCanonicalEventNames,
+  isContentfulCanonicalEventName,
+} from "@/contentful/personalization-plan";
 import { createSeedContentStore } from "@/contentful/transforms";
 import {
   getPersonalizationAudienceKeyFromProfile,
@@ -68,5 +72,20 @@ describe("personalization helpers", () => {
     expect(nextState.giftInterestScore).toBeGreaterThan(0);
     expect(nextState.recentCategoryInterest).toBe("gift-sets");
     expect(nextState.recentProductTags).toContain("gift");
+  });
+
+  it("only allows the canonical storefront event set into Contentful tracking", () => {
+    expect(contentfulCanonicalEventNames).toEqual([
+      "page_view",
+      "hero_cta_click",
+      "promo_strip_click",
+      "product_card_click",
+      "product_view",
+      "recommendation_click",
+      "experience_impression",
+    ]);
+
+    expect(isContentfulCanonicalEventName("product_view")).toBe(true);
+    expect(isContentfulCanonicalEventName("audience_segment_selected")).toBe(false);
   });
 });

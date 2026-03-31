@@ -66,6 +66,38 @@ export interface ResolvedPersonalizationVariant<T> {
   source: "contentful-personalization" | "debug-override" | "legacy-fallback";
 }
 
+export interface PersonalizationMetricDefinition {
+  id: string;
+  name: string;
+  trackedEventName: string;
+  type: "conversion" | "engagement" | "diagnostic";
+  notes?: string;
+}
+
+export interface PersonalizationExperienceDefinition {
+  slot: PersonalizationSlotKey;
+  name: string;
+  control: string;
+  audienceTargets: PersonalizationAudienceKey[];
+  notes?: string;
+}
+
+export interface PersonalizationExperimentDefinition {
+  slot: PersonalizationSlotKey;
+  name: string;
+  flagKey: string;
+  variants: string[];
+  primaryMetricId: string;
+  secondaryMetricIds: string[];
+  notes?: string;
+}
+
+export interface AudienceRuleRecommendation {
+  audienceKey: PersonalizationAudienceKey;
+  recommendedRule: string;
+  validationFallback?: string;
+}
+
 export interface ContentfulMetadata {
   entryId: string;
   contentType: string;

@@ -38,6 +38,14 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
   - first-party interest-state persistence in localStorage
   - active audience resolution from Contentful audience IDs
   - preview/dev-only audience override cookies
+- Only the canonical storefront event set is forwarded into Contentful personalization tracking:
+  - `page_view`
+  - `hero_cta_click`
+  - `promo_strip_click`
+  - `product_card_click`
+  - `product_view`
+  - `recommendation_click`
+  - `experience_impression`
 - Personalization affects:
   - homepage hero choice
   - global promo strip selection
@@ -53,6 +61,7 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
   - Contentful Personalization tracking when enabled
 - Development defaults to structured console logging plus Contentful event streaming when configured.
 - Server-side preview routes log `preview_mode_enabled` and `preview_mode_disabled`.
+- Temporary debug console logging is intentionally limited to preview or non-production environments even if `?nt_debug=1` is present.
 
 ## Contentful provisioning strategy
 

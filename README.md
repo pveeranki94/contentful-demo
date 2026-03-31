@@ -235,6 +235,14 @@ Debugging and QA:
 
 If Personalization is not configured, the app falls back to the legacy audience-aware content ordering and finally to the site-settings fallback segment.
 
+The canonical Contentful-side rollout plan lives in [`contentful/personalization-plan.ts`](/Users/prashanth.veeranki/Documents/contentful-demo/contentful/personalization-plan.ts). It defines:
+
+- the storefront events that are allowed to fan out into Contentful
+- the recommended metrics to create in Contentful Insights / Optimization
+- the first three experience slots to activate
+- the initial `/deals` experiment definition
+- the recommended audience rule wording we validated during setup
+
 ## Analytics
 
 Tracked events:
@@ -275,6 +283,34 @@ When Personalization is enabled, every app analytics event is also streamed to C
 - `utm_campaign`
 
 Development behavior still logs to the console through the existing adapter. External GA4/Segment fan-out remains optional.
+
+### Recommended Contentful metrics
+
+Create these metrics in Contentful once your event flow is clean:
+
+- `Deals CTA Conversion` -> `promo_strip_click`
+- `Hero CTA Conversion` -> `hero_cta_click`
+- `Recommendation CTR` -> `recommendation_click`
+- `Product Detail Engagement` -> `product_view`
+- `Experiment Impression` -> `experience_impression` as a diagnostic-only metric
+
+Do not block audience setup on component views. Component views are optional until you want richer Component Insights reporting.
+
+### Recommended first experiences and experiment
+
+The first rollout should stay intentionally narrow:
+
+- `global.promo_strip`
+  - audiences: `Deals Sensitive Visitor`, `Gift Intent`, fallback/default
+- `home.hero`
+  - audiences: `Home Fragrance Explorer`, `Body Care Ritual Seeker`, `Gift Intent`, `New Visitor`
+- `product.related_products`
+  - audiences: `Gift Intent`, `Home Fragrance Explorer`, `Body Care Ritual Seeker`
+- `/deals` experiment
+  - flag key: `NEXT_PUBLIC_CONTENTFUL_DEALS_EXPERIMENT_FLAG_KEY`
+  - variants: `campaign-first`, `product-discount-first`
+  - primary metric: `Deals CTA Conversion`
+  - secondary metric: `Recommendation CTR`
 
 ## Campaign scheduling and release demo
 
