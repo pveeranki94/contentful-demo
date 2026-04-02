@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Experience } from "@ninetailed/experience.js-react";
 
-import type { ContentfulEntry, HeroBannerFields } from "@/types/contentful";
+import type { ContentfulEntry, HeroBannerFields, NtExperienceFields } from "@/types/contentful";
 import type { HeroBannerModel } from "@/types/domain";
 import { HeroBannerSection } from "@/components/sections/hero-banner-section";
-import { resolveHeroForAudience } from "@/lib/contentful/personalization";
+import { buildManagedHeroExperiences } from "@/lib/contentful/managed-experiences";
 import { useContentfulPersonalization } from "@/providers/contentful-personalization-provider";
 
 interface PersonalizedHeroSectionProps {
@@ -13,6 +13,30 @@ interface PersonalizedHeroSectionProps {
   fallbackHero?: HeroBannerModel;
   previewEnabled: boolean;
   rawEntriesById: Record<string, ContentfulEntry>;
+  experienceEntries: Array<ContentfulEntry<NtExperienceFields>>;
+}
+
+function HeroExperienceRenderer({
+  previewEnabled,
+  rawEntriesById,
+  ...hero
+}: HeroBannerModel & {
+  previewEnabled: boolean;
+  rawEntriesById: Record<string, ContentfulEntry>;
+}) {
+  return (
+    <HeroBannerSection
+      hero={hero}
+      previewEnabled={previewEnabled}
+      rawEntry={
+        hero.contentfulMetadata?.entryId
+          ? (rawEntriesById[hero.contentfulMetadata.entryId] as
+              | ContentfulEntry<HeroBannerFields>
+              | undefined)
+          : undefined
+      }
+    />
+  );
 }
 
 export function PersonalizedHeroSection({
@@ -20,33 +44,40 @@ export function PersonalizedHeroSection({
   fallbackHero,
   previewEnabled,
   rawEntriesById,
+  experienceEntries,
 }: PersonalizedHeroSectionProps) {
   const personalization = useContentfulPersonalization();
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  const selectedHero = hydrated && personalization.enabled
-    ? resolveHeroForAudience(heroes, personalization.activeAudienceKey)
-    : fallbackHero;
-
-  if (!selectedHero) {
+  if (!fallbackHero) {
     return null;
   }
 
+  if (!personalization.enabled) {
+    return (
+      <HeroBannerSection
+        hero={fallbackHero}
+        previewEnabled={previewEnabled}
+        rawEntry={
+          fallbackHero.contentfulMetadata?.entryId
+            ? (rawEntriesById[fallbackHero.contentfulMetadata.entryId] as
+                | ContentfulEntry<HeroBannerFields>
+                | undefined)
+            : undefined
+        }
+      />
+    );
+  }
+
+  const experiences = buildManagedHeroExperiences(experienceEntries, heroes).map(
+    (experience) => experience.configuration,
+  );
+
   return (
-    <HeroBannerSection
-      hero={selectedHero}
-      previewEnabled={previewEnabled}
-      rawEntry={
-        selectedHero.contentfulMetadata?.entryId
-          ? (rawEntriesById[selectedHero.contentfulMetadata.entryId] as
-              | ContentfulEntry<HeroBannerFields>
-              | undefined)
-          : undefined
-      }
+    <Experience
+      {...fallbackHero}
+      component={HeroExperienceRenderer}
+      experiences={experiences}
+      passthroughProps={{ previewEnabled, rawEntriesById }}
     />
   );
 }

@@ -10,6 +10,7 @@ import {
   orderProductsForAudience,
 } from "@/lib/personalization";
 import type { CampaignModel, PageModel, ProductModel } from "@/types/domain";
+import type { ContentfulEntry, NtExperienceFields } from "@/types/contentful";
 
 type ContentStore = ReturnType<typeof createSeedContentStore>;
 
@@ -23,6 +24,7 @@ export interface HomePageData {
   audienceSegment: Awaited<ReturnType<typeof getAudienceSegment>>;
   source: ContentStore["source"];
   rawEntriesById: ContentStore["rawEntriesById"];
+  ntExperiences: Array<ContentfulEntry<NtExperienceFields>>;
 }
 
 export type DealsPageData = HomePageData;
@@ -39,6 +41,7 @@ export interface ProductPageData {
   audienceSegment: Awaited<ReturnType<typeof getAudienceSegment>>;
   source: ContentStore["source"];
   rawEntriesById: ContentStore["rawEntriesById"];
+  ntExperiences: Array<ContentfulEntry<NtExperienceFields>>;
 }
 
 async function fetchContentStore(preview = false) {
@@ -52,6 +55,7 @@ async function fetchContentStore(preview = false) {
       fetchContentfulEntries({ preview, query: contentfulQueries.products() }),
       fetchContentfulEntries({ preview, query: contentfulQueries.sections() }),
       fetchContentfulEntries({ preview, query: contentfulQueries.siteSettings() }),
+      fetchContentfulEntries({ preview, query: contentfulQueries.ntExperiences() }),
     ]);
 
     const contentStore = createContentStoreFromCollections({
@@ -63,6 +67,7 @@ async function fetchContentStore(preview = false) {
       products: collections[5],
       sections: collections[6],
       siteSettings: collections[7],
+      ntExperiences: collections[8],
     });
 
     if (contentStore) {
@@ -98,6 +103,7 @@ export async function getHomePageData(preview = false): Promise<HomePageData> {
     audienceSegment,
     source: store.source,
     rawEntriesById: store.rawEntriesById,
+    ntExperiences: store.ntExperiences,
   };
 }
 
@@ -122,6 +128,7 @@ export async function getDealsPageData(preview = false): Promise<DealsPageData> 
     audienceSegment,
     source: store.source,
     rawEntriesById: store.rawEntriesById,
+    ntExperiences: store.ntExperiences,
   };
 }
 
@@ -141,6 +148,7 @@ export async function getAboutPageData(preview = false): Promise<AboutPageData> 
     audienceSegment,
     source: store.source,
     rawEntriesById: store.rawEntriesById,
+    ntExperiences: store.ntExperiences,
   };
 }
 
@@ -170,6 +178,7 @@ export async function getProductPageData(
     audienceSegment,
     source: store.source,
     rawEntriesById: store.rawEntriesById,
+    ntExperiences: store.ntExperiences,
   };
 }
 

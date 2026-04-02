@@ -1,4 +1,5 @@
 import type { Document } from "@contentful/rich-text-types";
+import type { ExperienceConfiguration } from "@ninetailed/experience.js";
 
 export type LocaleCode = "en-US";
 
@@ -96,6 +97,24 @@ export interface AudienceRuleRecommendation {
   audienceKey: PersonalizationAudienceKey;
   recommendedRule: string;
   validationFallback?: string;
+}
+
+export interface ManagedExperienceVariant {
+  id: string;
+  hidden?: boolean;
+}
+
+export interface ManagedSlotExperience<TVariant extends ManagedExperienceVariant> {
+  id: string;
+  name: string;
+  type: "nt_experiment" | "nt_personalization";
+  primaryMetric?: string;
+  configuration: ExperienceConfiguration<TVariant>;
+}
+
+export interface ManagedRelatedProductsVariant extends ManagedExperienceVariant {
+  products: ProductModel[];
+  reason?: string;
 }
 
 export interface ContentfulMetadata {

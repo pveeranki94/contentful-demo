@@ -30,6 +30,7 @@ import type {
   PromoStripFields,
   SectionFields,
   SiteSettingsFields,
+  NtExperienceFields,
 } from "@/types/contentful";
 import type {
   AudienceSegment,
@@ -63,6 +64,7 @@ export interface ResolvedContentStore {
   products: ProductModel[];
   sections: SectionModel[];
   siteSettings: SiteSettingsModel;
+  ntExperiences: Array<ContentfulEntry<NtExperienceFields>>;
   rawEntriesById: Record<string, ContentfulEntry>;
   rawAssetsById: Record<string, ContentfulAsset>;
 }
@@ -339,6 +341,7 @@ export function createSeedContentStore(): ResolvedContentStore {
     products: [...products.values()],
     sections: [...sections.values()],
     siteSettings,
+    ntExperiences: [],
     rawEntriesById: {},
     rawAssetsById: {},
   };
@@ -561,6 +564,7 @@ export function createContentStoreFromCollections(collections: {
   products?: ContentfulCollection<ProductFields> | null;
   sections?: ContentfulCollection<SectionFields> | null;
   siteSettings?: ContentfulCollection<SiteSettingsFields> | null;
+  ntExperiences?: ContentfulCollection<NtExperienceFields> | null;
 }): ResolvedContentStore | null {
   const { entries, assets } = mergeCollections(Object.values(collections));
 
@@ -658,6 +662,9 @@ export function createContentStoreFromCollections(collections: {
     products: [...products.values()],
     sections: [...sections.values()],
     siteSettings,
+    ntExperiences: (collections.ntExperiences?.items ?? []) as Array<
+      ContentfulEntry<NtExperienceFields>
+    >,
     rawEntriesById: Object.fromEntries(entries),
     rawAssetsById: Object.fromEntries(assets),
   };

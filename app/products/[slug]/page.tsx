@@ -1,6 +1,7 @@
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 
+import { EntryAnalyticsBoundary } from "@/components/analytics/entry-analytics-boundary";
 import { LivePreviewProductPanel } from "@/components/live-preview/live-preview-product-panel";
 import { PersonalizedRelatedProducts } from "@/components/personalization/personalized-related-products";
 import { ProductGallery } from "@/components/product/product-gallery";
@@ -46,7 +47,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     : undefined;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+    <EntryAnalyticsBoundary entryId={product.contentfulMetadata?.entryId}>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <ProductViewTracker
         productId={product.id}
         slug={product.slug}
@@ -162,11 +164,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       <PersonalizedRelatedProducts
-        product={product}
         catalogProducts={data.allProducts}
         fallbackRecommendations={data.relatedProducts}
         previewEnabled={isEnabled}
+        experienceEntries={data.ntExperiences}
       />
-    </div>
+      </div>
+    </EntryAnalyticsBoundary>
   );
 }

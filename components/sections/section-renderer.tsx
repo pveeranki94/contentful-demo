@@ -13,12 +13,14 @@ import { SplitFeatureSection } from "@/components/sections/split-feature-section
 import { CampaignSpotlightSection } from "@/components/sections/campaign-spotlight-section";
 import { RecommendationBlockSection } from "@/components/sections/recommendation-block-section";
 import { PersonalizedHeroSection } from "@/components/personalization/personalized-hero-section";
+import type { NtExperienceFields } from "@/types/contentful";
 
 interface SectionRendererProps {
   sections: SectionModel[];
   audienceSegment: AudienceSegment;
   previewEnabled: boolean;
   rawEntriesById: Record<string, ContentfulEntry>;
+  experienceEntries: Array<ContentfulEntry<NtExperienceFields>>;
   activeCampaign?: CampaignModel;
   featuredProductsOverride?: ProductModel[];
 }
@@ -28,6 +30,7 @@ export function SectionRenderer({
   audienceSegment,
   previewEnabled,
   rawEntriesById,
+  experienceEntries,
   activeCampaign,
   featuredProductsOverride,
 }: SectionRendererProps) {
@@ -45,6 +48,7 @@ export function SectionRenderer({
           fallbackHero={selectedHero}
           previewEnabled={previewEnabled}
           rawEntriesById={rawEntriesById}
+          experienceEntries={experienceEntries}
         />
       ) : null}
 

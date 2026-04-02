@@ -18,4 +18,5 @@ export const contentfulQueries = {
   products: () => buildEntriesQuery(CONTENT_TYPE_IDS.product),
   sections: () => buildEntriesQuery(CONTENT_TYPE_IDS.section),
   siteSettings: () => buildEntriesQuery(CONTENT_TYPE_IDS.siteSettings),
+  ntExperiences: () => buildEntriesQuery(CONTENT_TYPE_IDS.ntExperience),
 };

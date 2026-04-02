@@ -51,7 +51,27 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
   - global promo strip selection
   - PDP related products
   - `/deals` featured merchandising experiment via a Contentful flag key
-- If the Personalization SDK is not configured, the app falls back to the existing seed/content-model audience helpers.
+- The primary rendering path is now **Contentful-managed experience delivery**:
+  - route loaders fetch `nt_experience` entries alongside the normal content model
+  - `lib/contentful/managed-experiences.ts` maps Contentful `nt_config` payloads into SDK `ExperienceConfiguration` objects
+  - `Experience` components, not local audience helpers, choose the rendered promo strip, hero, and related-product variants
+  - `useFlag` powers the `/deals` experiment instead of local profile hashing
+- The older local audience helpers remain only as an emergency fallback when Personalization is not configured or no matching experience data exists.
+
+## Content Insights
+
+- Pages and PDPs are wrapped in `components/analytics/entry-analytics-boundary.tsx`.
+- That wrapper uses Contentful `EntryAnalytics` so page and product entries can accrue entry-level analytics once the Contentful UI is configured.
+- For full entry analytics in Contentful, the installed Personalization / Analytics app should be added to the entry editor for:
+  - `page`
+  - `heroBanner`
+  - `promoStrip`
+  - `product`
+- Managed slots also rely on component views from the Experience SDK so Contentful can populate:
+  - `Variant profiles`
+  - `Estimated views`
+  - Component Insights
+  - Experience Insights
 
 ## Analytics
 
@@ -62,6 +82,11 @@ This lets the demo boot immediately while still supporting a full CMS-driven lif
 - Development defaults to structured console logging plus Contentful event streaming when configured.
 - Server-side preview routes log `preview_mode_enabled` and `preview_mode_disabled`.
 - Temporary debug console logging is intentionally limited to preview or non-production environments even if `?nt_debug=1` is present.
+- Contentful is the primary dashboard of record for:
+  - personalizations
+  - experiments
+  - audience insights
+  - content insights
 
 ## Contentful provisioning strategy
 

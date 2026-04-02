@@ -1,62 +1,94 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Experience } from "@ninetailed/experience.js-react";
 
 import { ProductCard } from "@/components/product/product-card";
-import { resolveRelatedProductsForAudience } from "@/lib/contentful/personalization";
+import {
+  buildBaselineRelatedProductVariant,
+  buildManagedRelatedProductExperiences,
+} from "@/lib/contentful/managed-experiences";
 import { useContentfulPersonalization } from "@/providers/contentful-personalization-provider";
-import type { ProductModel, ProductRecommendationModel } from "@/types/domain";
+import type { ContentfulEntry, NtExperienceFields } from "@/types/contentful";
+import type {
+  ManagedRelatedProductsVariant,
+  ProductModel,
+  ProductRecommendationModel,
+} from "@/types/domain";
 
 interface PersonalizedRelatedProductsProps {
-  product: ProductModel;
   catalogProducts: ProductModel[];
   fallbackRecommendations: ProductRecommendationModel[];
   previewEnabled: boolean;
+  experienceEntries: Array<ContentfulEntry<NtExperienceFields>>;
+}
+
+function RelatedProductExperienceCard({
+  previewEnabled,
+  ...variant
+}: ManagedRelatedProductsVariant & {
+  previewEnabled: boolean;
+}) {
+  const product = variant.products[0];
+
+  if (!product) {
+    return null;
+  }
+
+  return (
+    <ProductCard
+      product={product}
+      previewEnabled={previewEnabled}
+      eventName="recommendation_click"
+      reason={variant.reason}
+    />
+  );
 }
 
 export function PersonalizedRelatedProducts({
-  product,
   catalogProducts,
   fallbackRecommendations,
   previewEnabled,
+  experienceEntries,
 }: PersonalizedRelatedProductsProps) {
   const personalization = useContentfulPersonalization();
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  const recommendations = useMemo(() => {
-    if (!hydrated || !personalization.enabled) {
-      return fallbackRecommendations;
-    }
-
-    return resolveRelatedProductsForAudience(
-      product,
-      catalogProducts,
-      personalization.activeAudienceKey,
+  if (!personalization.enabled) {
+    return (
+      <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {fallbackRecommendations.map((recommendation) => (
+          <ProductCard
+            key={recommendation.product.id}
+            product={recommendation.product}
+            previewEnabled={previewEnabled}
+            eventName="recommendation_click"
+            reason={recommendation.reason}
+          />
+        ))}
+      </div>
     );
-  }, [
-    catalogProducts,
+  }
+
+  const experiences = buildManagedRelatedProductExperiences(
+    experienceEntries,
     fallbackRecommendations,
-    personalization.activeAudienceKey,
-    personalization.enabled,
-    product,
-    hydrated,
-  ]);
+    catalogProducts,
+  ).map((experience) => experience.configuration);
 
   return (
     <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-      {recommendations.map((recommendation) => (
-        <ProductCard
-          key={recommendation.product.id}
-          product={recommendation.product}
-          previewEnabled={previewEnabled}
-          eventName="recommendation_click"
-          reason={recommendation.reason}
-        />
-      ))}
+      {fallbackRecommendations.map((recommendation) => {
+        const baseline = buildBaselineRelatedProductVariant(recommendation);
+
+        return (
+          <Experience
+            key={baseline.id}
+            {...baseline}
+            component={RelatedProductExperienceCard}
+            experiences={experiences}
+            passthroughProps={{ previewEnabled }}
+          />
+        );
+      })}
     </div>
   );
 }

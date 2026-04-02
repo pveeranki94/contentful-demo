@@ -294,11 +294,16 @@ Create these metrics in Contentful once your event flow is clean:
 - `Product Detail Engagement` -> `product_view`
 - `Experiment Impression` -> `experience_impression` as a diagnostic-only metric
 
-Do not block audience setup on component views. Component views are optional until you want richer Component Insights reporting.
+Component views and entry analytics are now part of the managed-personalization path. Once you switch a slot to a Contentful-managed experience, Contentful should own:
+
+- variant selection
+- component views
+- variant-profile attribution
+- entry-level analytics on the rendered entries
 
 ### Recommended first experiences and experiment
 
-The first rollout should stay intentionally narrow:
+The first managed rollout should stay intentionally narrow:
 
 - `global.promo_strip`
   - audiences: `Deals Sensitive Visitor`, `Gift Intent`, fallback/default
@@ -311,6 +316,26 @@ The first rollout should stay intentionally narrow:
   - variants: `campaign-first`, `product-discount-first`
   - primary metric: `Deals CTA Conversion`
   - secondary metric: `Recommendation CTR`
+
+### Contentful-managed delivery and Content Insights
+
+The storefront now resolves the main personalized surfaces through Contentful-managed experiences instead of local audience helpers:
+
+- `global.promo_strip`
+- `home.hero`
+- `product.related_products`
+- `/deals` featured merchandising via the configured flag key
+
+The app also wraps page and product entries with Contentful `EntryAnalytics`, which is the first step toward entry-level Content Insights in the Contentful UI.
+
+To complete the Content Insights setup inside Contentful, add the installed Personalization / Analytics app to the entry editor for:
+
+- `page`
+- `heroBanner`
+- `promoStrip`
+- `product`
+
+That enables editors to use the `Analytics` tab on those entries once traffic and metrics accumulate.
 
 ## Campaign scheduling and release demo
 

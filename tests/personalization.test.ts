@@ -6,6 +6,12 @@ import {
 } from "@/contentful/personalization-plan";
 import { createSeedContentStore } from "@/contentful/transforms";
 import {
+  buildBaselineRelatedProductVariant,
+  buildManagedHeroExperiences,
+  buildManagedPromoStripExperiences,
+  buildManagedRelatedProductExperiences,
+} from "@/lib/contentful/managed-experiences";
+import {
   getPersonalizationAudienceKeyFromProfile,
   reducePersonalizationState,
 } from "@/lib/contentful/personalization";
@@ -87,5 +93,143 @@ describe("personalization helpers", () => {
 
     expect(isContentfulCanonicalEventName("product_view")).toBe(true);
     expect(isContentfulCanonicalEventName("audience_segment_selected")).toBe(false);
+  });
+
+  it("maps Contentful-managed promo strip experiences into SDK configurations", () => {
+    const experienceEntries = [
+      {
+        sys: {
+          id: "promo-exp-1",
+          type: "Entry" as const,
+          contentType: {
+            sys: {
+              id: "nt_experience",
+            },
+          },
+        },
+        fields: {
+          nt_name: "Promo Strip / Gift Intent",
+          nt_type: "nt_personalization",
+          nt_config: {
+            traffic: 100,
+            distribution: [100],
+            components: [
+              {
+                type: "EntryReplacement",
+                baseline: { id: "promo_bf_relax" },
+                variants: [{ id: "promo_bf_gifting" }],
+              },
+            ],
+          },
+        },
+      },
+    ];
+
+    const experiences = buildManagedPromoStripExperiences(
+      experienceEntries,
+      store.promoStrips,
+    );
+
+    expect(experiences).toHaveLength(1);
+    expect(experiences[0]?.configuration.type).toBe("nt_personalization");
+    expect(experiences[0]?.configuration.trafficAllocation).toBe(1);
+    expect(experiences[0]?.configuration.components[0]?.baseline.id).toBe(
+      "promo_bf_relax",
+    );
+    expect(experiences[0]?.configuration.components[0]?.variants[0]?.id).toBe(
+      "promo_bf_gifting",
+    );
+  });
+
+  it("maps Contentful-managed hero experiences into SDK configurations", () => {
+    const experienceEntries = [
+      {
+        sys: {
+          id: "hero-exp-1",
+          type: "Entry" as const,
+          contentType: {
+            sys: {
+              id: "nt_experience",
+            },
+          },
+        },
+        fields: {
+          nt_name: "Hero / Gift Intent",
+          nt_type: "nt_personalization",
+          nt_config: {
+            traffic: 1,
+            distribution: [1],
+            components: [
+              {
+                type: "EntryReplacement",
+                baseline: { id: "hero_home_relax" },
+                variants: [{ id: "hero_home_gifting" }],
+              },
+            ],
+          },
+        },
+      },
+    ];
+
+    const experiences = buildManagedHeroExperiences(
+      experienceEntries,
+      store.heroBanners.slice(0, 3),
+    );
+
+    expect(experiences).toHaveLength(1);
+    expect(experiences[0]?.configuration.components[0]?.baseline.id).toBe(
+      "hero_home_relax",
+    );
+    expect(experiences[0]?.configuration.components[0]?.variants[0]?.id).toBe(
+      "hero_home_gifting",
+    );
+  });
+
+  it("maps managed related-product experiences onto explicit product-list variants", () => {
+    const source = store.products.find(
+      (product) => product.slug === "evening-reset-gift-box",
+    )!;
+    const recommendations = getRelatedProducts(source, store.products, "gifting");
+    const baseline = buildBaselineRelatedProductVariant(recommendations[0]!);
+    const experienceEntries = [
+      {
+        sys: {
+          id: "related-exp-1",
+          type: "Entry" as const,
+          contentType: {
+            sys: {
+              id: "nt_experience",
+            },
+          },
+        },
+        fields: {
+          nt_name: "Related Products / Gift Intent",
+          nt_type: "nt_personalization",
+          nt_config: {
+            traffic: 100,
+            distribution: [100],
+            components: [
+              {
+                type: "EntryReplacement",
+                baseline: { id: baseline.id },
+                variants: [{ id: "product_renewal_hand_ritual_duo" }],
+              },
+            ],
+          },
+        },
+      },
+    ];
+
+    const experiences = buildManagedRelatedProductExperiences(
+      experienceEntries,
+      recommendations,
+      store.products,
+    );
+
+    expect(experiences).toHaveLength(1);
+    expect(experiences[0]?.configuration.components[0]?.baseline.id).toBe(baseline.id);
+    expect(experiences[0]?.configuration.components[0]?.variants[0]?.id).toBe(
+      "product_renewal_hand_ritual_duo",
+    );
   });
 });

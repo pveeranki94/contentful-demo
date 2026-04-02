@@ -160,3 +160,35 @@ export interface SiteSettingsFields {
   analyticsProvider?: string;
   analyticsMeasurementId?: string;
 }
+
+export interface NtExperienceVariantRef {
+  id: string;
+  hidden?: boolean;
+}
+
+export interface NtExperienceComponentConfig {
+  baseline: {
+    id: string;
+  };
+  variants: NtExperienceVariantRef[];
+  type: "EntryReplacement" | string;
+}
+
+export interface NtExperienceConfig {
+  distribution?: number[];
+  traffic?: number;
+  components?: NtExperienceComponentConfig[];
+  primaryMetric?: string;
+  [key: string]: unknown;
+}
+
+export interface NtExperienceFields {
+  nt_name?: string;
+  nt_description?: string;
+  nt_type?: "nt_experiment" | "nt_personalization" | string;
+  nt_config?: NtExperienceConfig;
+  nt_audience?: ContentfulLink;
+  nt_variants?: ContentfulLink[];
+  nt_experience_id?: string;
+  nt_metadata?: Record<string, unknown>;
+}

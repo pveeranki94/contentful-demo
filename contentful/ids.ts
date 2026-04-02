@@ -7,6 +7,7 @@ export const CONTENT_TYPE_IDS = {
   product: "product",
   section: "section",
   siteSettings: "siteSettings",
+  ntExperience: "nt_experience",
 } as const;
 
 export const ENTRY_IDS = {

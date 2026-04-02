@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
+import { useFlag } from "@ninetailed/experience.js-react";
 
 import { FeaturedProductsSection } from "@/components/sections/featured-products-section";
 import { useAnalytics } from "@/analytics/client";
 import {
-  getDealsExperimentVariantFromProfileId,
   getPersonalizationSlotDisplayName,
 } from "@/lib/contentful/personalization";
 import { useContentfulPersonalization } from "@/providers/contentful-personalization-provider";
+import { env } from "@/lib/env";
 import type { ProductModel, SectionModel } from "@/types/domain";
 
 interface DealsExperimentSectionProps {
@@ -17,9 +18,11 @@ interface DealsExperimentSectionProps {
   previewEnabled: boolean;
 }
 
+type DealsExperimentVariant = "campaign-first" | "product-discount-first";
+
 function sortProductsForVariant(
   products: ProductModel[],
-  variant: "campaign-first" | "product-discount-first",
+  variant: DealsExperimentVariant,
 ) {
   if (variant === "product-discount-first") {
     return [...products].sort((left, right) => {
@@ -43,11 +46,40 @@ export function DealsExperimentSection({
   products,
   previewEnabled,
 }: DealsExperimentSectionProps) {
+  if (!previewEnabled) {
+    return (
+      <ManagedDealsExperimentSection
+        section={section}
+        products={products}
+        previewEnabled={previewEnabled}
+      />
+    );
+  }
+
+  return (
+    <ManagedDealsExperimentSection
+      section={section}
+      products={products}
+      previewEnabled={previewEnabled}
+    />
+  );
+}
+
+function ManagedDealsExperimentSection({
+  section,
+  products,
+  previewEnabled,
+}: DealsExperimentSectionProps) {
   const personalization = useContentfulPersonalization();
   const { track } = useAnalytics();
-  const activeVariant = getDealsExperimentVariantFromProfileId(
-    personalization.profileId,
+  const { value: activeVariantValue } = useFlag<DealsExperimentVariant>(
+    env.nextPublicContentfulDealsExperimentFlagKey,
+    "campaign-first",
   );
+  const activeVariant: DealsExperimentVariant =
+    activeVariantValue === "product-discount-first"
+      ? "product-discount-first"
+      : "campaign-first";
   const trackedVariantRef = useRef<string | null>(null);
 
   const displayProducts = useMemo(

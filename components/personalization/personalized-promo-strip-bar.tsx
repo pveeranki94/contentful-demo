@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Experience } from "@ninetailed/experience.js-react";
 
-import type { ContentfulEntry, PromoStripFields } from "@/types/contentful";
+import type { ContentfulEntry, NtExperienceFields, PromoStripFields } from "@/types/contentful";
 import type { PromoStripModel } from "@/types/domain";
 import { PromoStripBar } from "@/components/layout/promo-strip-bar";
-import { resolvePromoStripForAudience } from "@/lib/contentful/personalization";
+import { buildManagedPromoStripExperiences } from "@/lib/contentful/managed-experiences";
 import { useContentfulPersonalization } from "@/providers/contentful-personalization-provider";
 
 interface PersonalizedPromoStripBarProps {
@@ -14,6 +14,33 @@ interface PersonalizedPromoStripBarProps {
   announcementText?: string;
   previewEnabled: boolean;
   rawEntriesById: Record<string, ContentfulEntry>;
+  experienceEntries: Array<ContentfulEntry<NtExperienceFields>>;
+}
+
+function PromoStripExperienceRenderer({
+  announcementText,
+  previewEnabled,
+  rawEntriesById,
+  ...strip
+}: PromoStripModel & {
+  announcementText?: string;
+  previewEnabled: boolean;
+  rawEntriesById: Record<string, ContentfulEntry>;
+}) {
+  return (
+    <PromoStripBar
+      strip={strip}
+      announcementText={announcementText}
+      previewEnabled={previewEnabled}
+      rawEntry={
+        strip.contentfulMetadata?.entryId
+          ? (rawEntriesById[strip.contentfulMetadata.entryId] as
+              | ContentfulEntry<PromoStripFields>
+              | undefined)
+          : undefined
+      }
+    />
+  );
 }
 
 export function PersonalizedPromoStripBar({
@@ -22,34 +49,48 @@ export function PersonalizedPromoStripBar({
   announcementText,
   previewEnabled,
   rawEntriesById,
+  experienceEntries,
 }: PersonalizedPromoStripBarProps) {
   const personalization = useContentfulPersonalization();
-  const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
+  if (!fallbackStrip) {
+    return (
+      <PromoStripBar
+        strip={undefined}
+        announcementText={announcementText}
+        previewEnabled={previewEnabled}
+      />
+    );
+  }
 
-  const selectedStrip = hydrated && personalization.enabled
-    ? resolvePromoStripForAudience(
-        strips,
-        fallbackStrip,
-        personalization.activeAudienceKey,
-      )
-    : fallbackStrip;
+  if (!personalization.enabled) {
+    return (
+      <PromoStripBar
+        strip={fallbackStrip}
+        announcementText={announcementText}
+        previewEnabled={previewEnabled}
+        rawEntry={
+          fallbackStrip.contentfulMetadata?.entryId
+            ? (rawEntriesById[fallbackStrip.contentfulMetadata.entryId] as
+                | ContentfulEntry<PromoStripFields>
+                | undefined)
+            : undefined
+        }
+      />
+    );
+  }
+
+  const experiences = buildManagedPromoStripExperiences(experienceEntries, [
+    fallbackStrip,
+    ...strips.filter((strip) => strip.id !== fallbackStrip.id),
+  ]).map((experience) => experience.configuration);
 
   return (
-    <PromoStripBar
-      strip={selectedStrip}
-      announcementText={announcementText}
-      previewEnabled={previewEnabled}
-      rawEntry={
-        selectedStrip?.contentfulMetadata?.entryId
-          ? (rawEntriesById[selectedStrip.contentfulMetadata.entryId] as
-              | ContentfulEntry<PromoStripFields>
-              | undefined)
-          : undefined
-      }
+    <Experience
+      {...fallbackStrip}
+      component={PromoStripExperienceRenderer}
+      experiences={experiences}
+      passthroughProps={{ announcementText, previewEnabled, rawEntriesById }}
     />
   );
 }

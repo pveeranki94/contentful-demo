@@ -62,6 +62,7 @@ export default async function RootLayout({
                   announcementText={store.siteSettings.announcementText}
                   previewEnabled={isEnabled}
                   rawEntriesById={store.rawEntriesById}
+                  experienceEntries={store.ntExperiences}
                 />
                 <Header siteSettings={store.siteSettings} />
                 <main>{children}</main>

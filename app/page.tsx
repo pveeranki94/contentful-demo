@@ -1,5 +1,6 @@
 import { draftMode } from "next/headers";
 
+import { EntryAnalyticsBoundary } from "@/components/analytics/entry-analytics-boundary";
 import { SectionRenderer } from "@/components/sections/section-renderer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { buildMetadata } from "@/lib/metadata";
@@ -21,23 +22,26 @@ export default async function HomePage() {
   const data = await getHomePageData(isEnabled);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
-      {data.page ? (
-        <div className="section-stack">
-          <SectionRenderer
-            sections={data.page.sections}
-            audienceSegment={data.audienceSegment}
-            previewEnabled={isEnabled}
-            rawEntriesById={data.rawEntriesById}
-            activeCampaign={data.activeCampaign}
+    <EntryAnalyticsBoundary entryId={data.page?.contentfulMetadata?.entryId}>
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        {data.page ? (
+          <div className="section-stack">
+            <SectionRenderer
+              sections={data.page.sections}
+              audienceSegment={data.audienceSegment}
+              previewEnabled={isEnabled}
+              rawEntriesById={data.rawEntriesById}
+              experienceEntries={data.ntExperiences}
+              activeCampaign={data.activeCampaign}
+            />
+          </div>
+        ) : (
+          <EmptyState
+            title="Home content is ready for seeding"
+            description="Run the Contentful provisioning script or rely on the in-repo fallback dataset to populate the storefront."
           />
-        </div>
-      ) : (
-        <EmptyState
-          title="Home content is ready for seeding"
-          description="Run the Contentful provisioning script or rely on the in-repo fallback dataset to populate the storefront."
-        />
-      )}
-    </div>
+        )}
+      </div>
+    </EntryAnalyticsBoundary>
   );
 }
